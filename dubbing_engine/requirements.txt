@@ -1,0 +1,18 @@
+# Backend
+fastapi
+uvicorn[standard]
+pydub
+python-multipart
+
+# AI / ML (Rebuilt Context-Aware Pipeline)
+torch==2.2.2 --index-url https://download.pytorch.org/whl/cpu
+torchaudio==2.2.2 --index-url https://download.pytorch.org/whl/cpu
+openai-whisper
+edge-tts
+deep-translator
+
+# Processing
+librosa
+soundfile
+numpy==1.26.4
+noisereduce
