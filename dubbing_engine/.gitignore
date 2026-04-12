@@ -9,6 +9,7 @@ env/
 venv/
 .venv/
 pip-wheel-metadata/
+*.egg-info/
 
 ### Virtual environments
 .env
@@ -19,6 +20,7 @@ pip-wheel-metadata/
 build/
 dist/
 *.egg-info/
+.eggs/
 
 ### Logs & temp files
 *.log
@@ -26,24 +28,94 @@ dist/
 *.temp
 *.swp
 *.swo
+*~
 
 ### IDE / Editor
 .vscode/
 .idea/
 *.iml
+*.sublime-project
+*.sublime-workspace
+.DS_Store
 
 ### macOS
 .DS_Store
 .AppleDouble
 .LSOverride
+*.swp
+.AppleDouble
+.LSOverride
 
-### Node (if frontend is added later)
+### Audio & Media Files
+uploads/
+*.wav
+*.mp3
+*.flac
+*.ogg
+*.m4a
+*.aac
+*.wma
+
+### Backend Audio Processing
+backend/outputs/
+backend/uploads/
+backend/outputs/temp/
+*.mp3
+*.wav
+*.flac
+
+### Model Cache Directories
+# Whisper models
+~/.cache/whisper/
+models/whisper/
+
+# Demucs models
+~/.cache/demucs/
+models/demucs/
+
+# TTS models
+models/tts/
+.cache/
+
+### Temporary Processing Files
+temp/
+tmp/
+*.tmp
+*.temp
+
+### Package management
+lock/
+conda.lock
+
+### Test coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+### Node modules (if frontend framework added)
 node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+.npm
+package-lock.json
+
+### OS-specific
+Thumbs.db
+.Thumbs.db
+
+### IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
 
 ### Project-specific
-uploads/
-*.wav
+job_sessions/
+*.bak
+*.backup
+debug/
+logs/
 
