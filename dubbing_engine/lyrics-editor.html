@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Lyrics Editor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .job-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .job-info-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .job-info-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .job-info-value {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
+        .audio-player {
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            text-align: center;
+        }
+        
+        audio {
+            width: 100%;
+            max-width: 500px;
+            margin: 10px auto;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .segment-list {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .segment-item {
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .segment-item:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+        
+        .segment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .segment-time {
+            background: #667eea;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+        
+        .segment-id {
+            background: #764ba2;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+        
+        .lyrics-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .lyrics-section {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .lyrics-label {
+            font-weight: bold;
+            color: #666;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+        
+        .lyrics-text {
+            background: white;
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            border-radius: 5px;
+            min-height: 50px;
+            padding: 10px;
+            min-height: 50px;
+        }
+        
+        .lyrics-text.original {
+            color: #666;
+            resize: none;
+        }
+        
+        .lyrics-text.translated {
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .voice-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .control-label {
+            font-weight: bold;
+            color: #666;
+            margin-bottom: 5px;
+            font-size: 0.85em;
+        }
+        
+        select, textarea, button {
+            padding: 8px 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+        
+        select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+        
+        .btn-save {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-save:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-regenerate {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-regenerate:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+        
+        .btn-rebuild {
+            background: #764ba2;
+            color: white;
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 1.1em;
+        }
+        
+        .btn-rebuild:hover {
+            background: #6a3f8f;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(118, 75, 162, 0.4);
+        }
+        
+        .status-message {
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: none;
+        }
+        
+        .status-message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .status-message.show {
+            display: block;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+        }
+        
+        .loading.show {
+            display: block;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎵 Audio Lyrics Editor</h1>
+            <p>Edit lyrics, change voice tones, and regenerate audio</p>
+        </div>
+        
+        <div class="job-info">
+            <div class="job-info-item">
+                <span class="job-info-label">Job ID</span>
+                <span class="job-info-value" id="jobId">-</span>
+            </div>
+            <div class="job-info-item">
+                <span class="job-info-label">Audio Type</span>
+                <span class="job-info-value" id="audioType">-</span>
+            </div>
+            <div class="job-info-item">
+                <span class="job-info-label">Target Language</span>
+                <span class="job-info-value" id="targetLang">-</span>
+            </div>
+            <div class="job-info-item">
+                <span class="job-info-label">Total Segments</span>
+                <span class="job-info-value" id="totalSegments">-</span>
+            </div>
+        </div>
+        
+        <div class="audio-player">
+            <audio id="audioPlayer" controls></audio>
+        </div>
+        
+        <div class="content">
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Loading lyrics...</p>
+            </div>
+            
+            <div class="segment-list" id="segmentList">
+                <!-- Segments will be populated here -->
+            </div>
+            
+            <button class="btn-rebuild" id="rebuildBtn" onclick="rebuildAudio()">
+                🔄 Rebuild Final Audio
+            </button>
+            
+            <div class="status-message" id="statusMessage"></div>
+        </div>
+    </div>
+    
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const jobId = urlParams.get('job_id');
+        const audioUrl = urlParams.get('audio_url');
+        
+        if (!jobId) {
+            alert('No job ID provided. Please specify ?job_id=YOUR_JOB_ID');
+        }
+        
+        // Load audio
+        if (audioUrl) {
+            document.getElementById('audioPlayer').src = audioUrl;
+        }
+        
+        // Fetch lyrics
+        async function loadLyrics() {
+            try {
+                document.getElementById('loading').classList.add('show');
+                const response = await fetch(`/lyrics/${jobId}`);
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    showStatus(`Error: ${data.detail}`, 'error');
+                    return;
+                }
+                
+                document.getElementById('jobId').textContent = jobId;
+                document.getElementById('audioType').textContent = data.audio_type;
+                document.getElementById('targetLang').textContent = data.target_language.toUpperCase();
+                document.getElementById('totalSegments').textContent = data.lyrics.length;
+                
+                renderSegments(data.lyrics);
+            } catch (error) {
+                showStatus(`Failed to load lyrics: ${error}`, 'error');
+            } finally {
+                document.getElementById('loading').classList.remove('show');
+            }
+        }
+        
+        function renderSegments(lyrics) {
+            const list = document.getElementById('segmentList');
+            list.innerHTML = '';
+            
+            lyrics.forEach(segment => {
+                const segmentDiv = document.createElement('div');
+                segmentDiv.className = 'segment-item';
+                segmentDiv.innerHTML = `
+                    <div class="segment-header">
+                        <span class="segment-id">Segment #${segment.segment_id}</span>
+                        <span class="segment-time">${formatTime(segment.start)} - ${formatTime(segment.end)} (${segment.duration.toFixed(2)}s)</span>
+                    </div>
+                    
+                    <div class="lyrics-container">
+                        <div class="lyrics-section">
+                            <label class="lyrics-label">Original Lyrics</label>
+                            <textarea class="lyrics-text original" readonly>${segment.original_text}</textarea>
+                        </div>
+                        <div class="lyrics-section">
+                            <label class="lyrics-label">Translated Lyrics</label>
+                            <textarea class="lyrics-text translated" id="trans_${segment.segment_id}">${segment.translated_text}</textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="voice-controls">
+                        <div class="control-group">
+                            <label class="control-label">Gender</label>
+                            <select id="gender_${segment.segment_id}" value="${segment.gender}">
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">Age Group</label>
+                            <select id="age_${segment.segment_id}" value="${segment.age_group}">
+                                <option value="child">Child</option>
+                                <option value="young_adult">Young Adult</option>
+                                <option value="adult">Adult</option>
+                                <option value="elderly">Elderly</option>
+                            </select>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">Profile</label>
+                            <div style="padding-top: 8px; color: #666;">${segment.voice_profile}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button class="btn-save" onclick="saveSegment(${segment.segment_id})">💾 Save Lyrics</button>
+                        <button class="btn-regenerate" onclick="regenerateSegment(${segment.segment_id})">🎙️ Regenerate Voice</button>
+                    </div>
+                `;
+                list.appendChild(segmentDiv);
+            });
+        }
+        
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = (seconds % 60).toFixed(2);
+            return `${mins}:${secs.padStart(5, '0')}`;
+        }
+        
+        async function saveSegment(segmentId) {
+            try {
+                const translatedText = document.getElementById(`trans_${segmentId}`).value;
+                const formData = new FormData();
+                formData.append('new_translated_text', translatedText);
+                
+                const response = await fetch(`/edit-segment/${jobId}?segment_id=${segmentId}`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showStatus(`✅ Segment ${segmentId} lyrics saved!`, 'success');
+                } else {
+                    showStatus(`Error: ${data.detail}`, 'error');
+                }
+            } catch (error) {
+                showStatus(`Failed to save: ${error}`, 'error');
+            }
+        }
+        
+        async function regenerateSegment(segmentId) {
+            try {
+                const gender = document.getElementById(`gender_${segmentId}`).value;
+                const ageGroup = document.getElementById(`age_${segmentId}`).value;
+                
+                const formData = new FormData();
+                formData.append('segment_id', segmentId);
+                formData.append('gender', gender);
+                formData.append('age_group', ageGroup);
+                
+                document.getElementById('loading').classList.add('show');
+                const response = await fetch(`/regenerate-segment/${jobId}`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showStatus(`✅ Segment ${segmentId} regenerated with ${gender} ${ageGroup} voice!`, 'success');
+                    // Reload to show updated voice profile
+                    setTimeout(() => location.reload(), 2000);
+                } else {
+                    showStatus(`Error: ${data.detail}`, 'error');
+                }
+            } catch (error) {
+                showStatus(`Failed to regenerate: ${error}`, 'error');
+            } finally {
+                document.getElementById('loading').classList.remove('show');
+            }
+        }
+        
+        async function rebuildAudio() {
+            try {
+                document.getElementById('loading').classList.add('show');
+                const response = await fetch(`/rebuild-audio/${jobId}`, {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showStatus(`✅ Final audio rebuilt successfully!`, 'success');
+                    document.getElementById('audioPlayer').src = data.audio_url + '?t=' + Date.now();
+                } else {
+                    showStatus(`Error: ${data.detail}`, 'error');
+                }
+            } catch (error) {
+                showStatus(`Failed to rebuild: ${error}`, 'error');
+            } finally {
+                document.getElementById('loading').classList.remove('show');
+            }
+        }
+        
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('statusMessage');
+            statusDiv.textContent = message;
+            statusDiv.className = `status-message ${type} show`;
+            
+            setTimeout(() => {
+                statusDiv.classList.remove('show');
+            }, 5000);
+        }
+        
+        // Load lyrics on page load
+        window.addEventListener('load', loadLyrics);
+    </script>
+</body>
+</html>

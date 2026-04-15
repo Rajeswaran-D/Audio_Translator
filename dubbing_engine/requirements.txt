@@ -5,14 +5,22 @@ pydub
 python-multipart
 
 # AI / ML (Rebuilt Context-Aware Pipeline)
-torch==2.2.2 --index-url https://download.pytorch.org/whl/cpu
-torchaudio==2.2.2 --index-url https://download.pytorch.org/whl/cpu
+torch>=2.2.2
+torchaudio>=2.2.2
 openai-whisper
 edge-tts
 deep-translator
 
-# Processing
+# Processing & Quality Enhancement
 librosa
 soundfile
-numpy==1.26.4
+numpy>=1.24.0,<2.0.0
 noisereduce
+
+# Vocal Separation (for song translation)
+demucs
+
+# Neural Speech Translation (Optional - Install for better quality)
+# seamless_communication  # Uncomment for SeamlessM4T speech-to-speech translation
+# fastpitch  # Uncomment for neural vocoder
+# glow-tts  # Uncomment for better TTS quality
